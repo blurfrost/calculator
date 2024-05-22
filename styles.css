@@ -54,3 +54,7 @@
     max-width: 40%;
 }
 
+#error-showcase {
+    margin: 8px;
+    color: darkred;
+}

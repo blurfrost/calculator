@@ -4,86 +4,74 @@ let second = 3;
 let operator = "+";
 let displayValue = "0";
 const displayActual = document.querySelector("#display");
+const errorMessage = document.querySelector("#error-showcase");
 
 const buttonZero = document.querySelector("#zero");
-buttonZero.addEventListener("click", () => {
-    initialClear();
-    displayValue += "0";
-    updateDisplay(displayValue);
-});
+buttonZero.addEventListener("click", () => reflectOnDisplay("0"));
 
 const buttonOne = document.querySelector("#one");
-buttonOne.addEventListener("click", () => {
-    initialClear();
-    displayValue += "1";
-    updateDisplay(displayValue);
-});
+buttonOne.addEventListener("click", () => reflectOnDisplay("1"));
 
 const buttonTwo = document.querySelector("#two");
-buttonTwo.addEventListener("click", () => {
-    initialClear();
-    displayValue += "2";
-    updateDisplay(displayValue);
-});
+buttonTwo.addEventListener("click", () => reflectOnDisplay("2"));
 
 const buttonThree = document.querySelector("#three");
-buttonThree.addEventListener("click", () => {
-    initialClear();
-    displayValue += "3";
-    updateDisplay(displayValue);
-});
+buttonThree.addEventListener("click", () => reflectOnDisplay("3"));
 
 const buttonFour = document.querySelector("#four");
-buttonFour.addEventListener("click", () => {
-    initialClear();
-    displayValue += "4";
-    updateDisplay(displayValue);
-});
+buttonFour.addEventListener("click", () => reflectOnDisplay("4"));
 
 const buttonFive = document.querySelector("#five");
-buttonFive.addEventListener("click", () => {
-    initialClear();
-    displayValue += "5";
-    updateDisplay(displayValue);
-});
+buttonFive.addEventListener("click", () => reflectOnDisplay("5"));
 
 const buttonSix = document.querySelector("#six");
-buttonSix.addEventListener("click", () => {
-    initialClear();
-    displayValue += "6";
-    updateDisplay(displayValue);
-});
+buttonSix.addEventListener("click", () => reflectOnDisplay("6"));
 
 const buttonSeven = document.querySelector("#seven");
-buttonSeven.addEventListener("click", () => {
-    initialClear();
-    displayValue += "7";
-    updateDisplay(displayValue);
-});
+buttonSeven.addEventListener("click", () => reflectOnDisplay("7"));
 
 const buttonEight = document.querySelector("#eight");
-buttonEight.addEventListener("click", () => {
-    initialClear();
-    displayValue += "8";
-    updateDisplay(displayValue);
-});
+buttonEight.addEventListener("click", () => reflectOnDisplay("8"));
 
 const buttonNine = document.querySelector("#nine");
-buttonNine.addEventListener("click", () => {
-    initialClear();
-    displayValue += "9";
-    updateDisplay(displayValue);
-});
+buttonNine.addEventListener("click", () => reflectOnDisplay("9"));
 
-function initialClear() {
+const allClearButton = document.querySelector("#all-clear");
+allClearButton.addEventListener("click", () => reflectOnDisplay("allclear"))
+
+const clearButton = document.querySelector("#clear");
+clearButton.addEventListener("click", () => reflectOnDisplay("clear"))
+
+function reflectOnDisplay(input) {
+    console.log(input);
+    if (input >= 0 && input <= 9 && checkCurrentDisplay() === 1 ) {
+        displayValue += input;
+    }
+    else if (input === "allclear") {
+        displayValue = "0";
+    }
+    else if (input === "clear") {
+        displayValue = displayValue.slice(0, -1);
+    }
+    updateDisplay(displayValue);
+}
+        
+function checkCurrentDisplay() {
     if (displayValue === "0") {
         displayValue = "";
+        return 1;
     }
-}
+    else if (displayValue.length === 16) {
+        errorMessage.textContent = "Character limit reached, please use C or AC to reduce the number of characters";
+        return 0;
+    }
+    return 1;
+} 
 
 function updateDisplay(display) {
     displayActual.textContent = display;
 }
+
 
 operate(first, operator, second);
 
