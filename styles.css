@@ -16,10 +16,19 @@
 
 }
 
-#display {
+#display-container {
+    max-height: 15%;
     border: 2px solid black;
     margin: 8px;
     flex: 1 1 auto;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+#display {
+    font-size: 60px;
+    margin: 0 24px;
 }
 
 .row-container {
@@ -29,7 +38,8 @@
     flex: 1 1 auto;
 }
 
-.box {   
+.box {
+    font-size: 24px;   
     max-width: 17.3%;
     flex: 1 1 auto;
     border: 2px solid black;
