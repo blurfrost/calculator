@@ -42,9 +42,23 @@ allClearButton.addEventListener("click", () => reflectOnDisplay("allclear"))
 const clearButton = document.querySelector("#clear");
 clearButton.addEventListener("click", () => reflectOnDisplay("clear"))
 
+const addButton = document.querySelector("#add");
+addButton.addEventListener("click", () => reflectOnDisplay("+"))
+
+const subtractButton = document.querySelector("#subtract");
+subtractButton.addEventListener("click", () => reflectOnDisplay("-"))
+
+const multiplyButton = document.querySelector("#multiply");
+multiplyButton.addEventListener("click", () => reflectOnDisplay("*"))
+
+const divideButton = document.querySelector("#divide");
+divideButton.addEventListener("click", () => reflectOnDisplay("/"))
+
+
 function reflectOnDisplay(input) {
     console.log(input);
-    if (input >= 0 && input <= 9 && checkCurrentDisplay() === 1 ) {
+    errorMessage.textContent = "";
+    if (input >= 0 && input <= 9 && checkCurrentDisplay("numeric")) {
         displayValue += input;
     }
     else if (input === "allclear") {
@@ -53,15 +67,20 @@ function reflectOnDisplay(input) {
     else if (input === "clear") {
         displayValue = displayValue.slice(0, -1);
     }
+    else if ((input === "+" || input === "-" || input === "*" || input === "/") && checkCurrentDisplay("operator")) {
+        displayValue += input;
+    }
     updateDisplay(displayValue);
 }
-        
-function checkCurrentDisplay() {
-    if (displayValue === "0") {
+
+
+function checkCurrentDisplay(type) {
+    // clears display of initial "0" when first number is keyed in
+    if (displayValue === "0" && type === "numeric") {
         displayValue = "";
-        return 1;
     }
-    else if (displayValue.length === 16) {
+    // character limit for the calculator
+    else if ((displayValue.length >= 16 && type === "numeric") || (displayValue.length >= 15 && type === "operator")) {
         errorMessage.textContent = "Character limit reached, please use C or AC to reduce the number of characters";
         return 0;
     }
@@ -71,7 +90,6 @@ function checkCurrentDisplay() {
 function updateDisplay(display) {
     displayActual.textContent = display;
 }
-
 
 operate(first, operator, second);
 
@@ -90,7 +108,6 @@ function operate(firstNum, operator, secondNum) {
     }
     console.log(result);
 }
-
 
 function add(firstNum, secondNum) {
     return firstNum + secondNum;
