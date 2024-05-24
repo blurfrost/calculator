@@ -37,26 +37,28 @@ const buttonNine = document.querySelector("#nine");
 buttonNine.addEventListener("click", () => reflectOnDisplay("9"));
 
 const allClearButton = document.querySelector("#all-clear");
-allClearButton.addEventListener("click", () => reflectOnDisplay("allclear"))
+allClearButton.addEventListener("click", () => reflectOnDisplay("allclear"));
 
 const clearButton = document.querySelector("#clear");
-clearButton.addEventListener("click", () => reflectOnDisplay("clear"))
+clearButton.addEventListener("click", () => reflectOnDisplay("clear"));
 
 const addButton = document.querySelector("#add");
-addButton.addEventListener("click", () => reflectOnDisplay("+"))
+addButton.addEventListener("click", () => reflectOnDisplay("+"));
 
 const subtractButton = document.querySelector("#subtract");
-subtractButton.addEventListener("click", () => reflectOnDisplay("-"))
+subtractButton.addEventListener("click", () => reflectOnDisplay("-"));
 
 const multiplyButton = document.querySelector("#multiply");
-multiplyButton.addEventListener("click", () => reflectOnDisplay("*"))
+multiplyButton.addEventListener("click", () => reflectOnDisplay("*"));
 
 const divideButton = document.querySelector("#divide");
-divideButton.addEventListener("click", () => reflectOnDisplay("/"))
+divideButton.addEventListener("click", () => reflectOnDisplay("/"));
+
+const equalButton = document.querySelector("#equate");
+equalButton.addEventListener("click", () => reflectOnDisplay("="));
 
 
 function reflectOnDisplay(input) {
-    console.log(input);
     errorMessage.textContent = "";
     // update display if a number is clicked
     if (input >= 0 && input <= 9 && checkCurrentDisplay("numeric")) {
@@ -74,9 +76,12 @@ function reflectOnDisplay(input) {
     else if (checkForOperator(input) && checkCurrentDisplay("operator") && noCurrentOperator()) {
         displayValue += input;
     }
+    else if (input === "=") {
+        displayValue = commenceOperation(displayValue);
+    }
+    console.log("Input: " + input + " Display: " + displayValue + " Chars: " + displayValue.length);
     updateDisplay(displayValue);
 }
-
 
 function checkCurrentDisplay(type) {
     // clears display of initial "0" when first number is keyed in
@@ -116,7 +121,25 @@ function updateDisplay(display) {
     displayActual.textContent = display;
 }
 
-operate(first, operator, second);
+function commenceOperation(displayValue) {
+    let first = "";
+    let operator = "";
+    let operatorPoint = "";
+    let second = "";
+    for (i = 0; i < displayValue.length; i++) {
+        if(checkForOperator(displayValue[i])) {
+            // extract operator (there should be only one after the prior checks)
+            operator = displayValue[i];
+            operatorPoint = i;
+            break;
+        }
+    }
+    // extract first number
+    first = Number(displayValue.slice(0, operatorPoint));
+    // extract second number
+    second = Number(displayValue.slice(operatorPoint + 1, displayValue.length));
+    return operate(first, operator, second);
+}
 
 function operate(firstNum, operator, secondNum) {
     if (operator === "+") {
@@ -125,13 +148,14 @@ function operate(firstNum, operator, secondNum) {
     else if (operator === "-") {
         result = subtract(firstNum, secondNum);
     }
-    else if (operator === "X") {
+    else if (operator === "*") {
         result = multiply(firstNum, secondNum);
     }
     else if (operator === "/") {
         result = divide(firstNum, secondNum);
     }
-    console.log(result);
+    console.log("Result: " + result);
+    return result;
 }
 
 function add(firstNum, secondNum) {
@@ -147,6 +171,11 @@ function multiply(firstNum, secondNum) {
 }
 
 function divide(firstNum, secondNum) {
+    if (secondNum === 0) {
+        errorMessage.textContent = "You cannot divide a number by zero!";
+        console.log("Error: Attempted to divide by zero");
+        return displayValue;
+    }
     return firstNum / secondNum;
 }
 
