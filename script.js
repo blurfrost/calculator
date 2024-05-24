@@ -3,6 +3,7 @@ let first = 6;
 let second = 3;
 let operator = "+";
 let displayValue = "0";
+const charLimit = 16;
 const displayActual = document.querySelector("#display");
 const errorMessage = document.querySelector("#error-showcase");
 
@@ -89,9 +90,14 @@ function checkCurrentDisplay(type) {
         displayValue = "";
     }
     // character limit for the calculator
-    else if ((displayValue.length >= 16 && type === "numeric") || (displayValue.length >= 15 && type === "operator")) {
-        errorMessage.textContent = "Character limit reached, please use C or AC to reduce the number of characters";
-        console.log("Error: Character limit reached (maximum: 16)")
+    else if (displayValue.length >= charLimit && type === "numeric") {
+        errorMessage.textContent = "Character limit of " + charLimit + " reached, please use C or AC to reduce the number of characters";
+        console.log("Error: Character limit of " + charLimit + " reached");
+        return 0;
+    }
+    else if (displayValue.length >= (charLimit - 1) && type === "operator") {
+        errorMessage.textContent = "Cannot place operator since the character limit of " + charLimit + " will be reached, preventing you from adding additional numbers";
+        console.log("Error: Cannot place operator at the character limit of " + charLimit);
         return 0;
     }
     return 1;
@@ -122,10 +128,8 @@ function updateDisplay(display) {
 }
 
 function commenceOperation(displayValue) {
-    let first = "";
     let operator = "";
     let operatorPoint = "";
-    let second = "";
     for (i = 0; i < displayValue.length; i++) {
         if(checkForOperator(displayValue[i])) {
             // extract operator (there should be only one after the prior checks)
@@ -134,11 +138,27 @@ function commenceOperation(displayValue) {
             break;
         }
     }
-    // extract first number
+    // extract first number (note: need to convert numbers from string to number form, if not they will just be concatanated)
     first = Number(displayValue.slice(0, operatorPoint));
     // extract second number
     second = Number(displayValue.slice(operatorPoint + 1, displayValue.length));
-    return operate(first, operator, second);
+    // perform calculation
+    let calculatedNumber = operate(first, operator, second);
+    let calculatedString = String(calculatedNumber);
+    if (calculatedString.length > charLimit) {
+        // reduce the decimal places of the calculation to that of the maximum character limit if the calculation resulted in a decimal
+        if (calculatedNumber % 1 != 0) {
+            calculatedString = limitDecimalPlaces(calculatedNumber, calculatedString);
+        }
+        // if calculation resulted in breaking the character limit, prevent the calculation from proceeding
+        else {
+            errorMessage.textContent = "Operation result exceeds character limit of " + charLimit;
+            console.log("Error: Operation result exceeds character limit of " + charLimit);
+            return displayValue;
+        }
+    }
+    console.log("Calculation: " + first + " " + operator + " " + second + " = " + calculatedString);
+    return calculatedString;
 }
 
 function operate(firstNum, operator, secondNum) {
@@ -154,7 +174,6 @@ function operate(firstNum, operator, secondNum) {
     else if (operator === "/") {
         result = divide(firstNum, secondNum);
     }
-    console.log("Result: " + result);
     return result;
 }
 
@@ -177,6 +196,17 @@ function divide(firstNum, secondNum) {
         return displayValue;
     }
     return firstNum / secondNum;
+}
+
+function limitDecimalPlaces(number, string) {
+    let decimalPosition;
+    for (i = 0; i < string.length; i++) {
+        if (string[i] === ".") {
+            decimalPosition = i;
+        } 
+    }
+    // returns a number rounded to the max decimal places allowed by the current char limit (this is returned as a string due to toFixed)
+    return number.toFixed(charLimit - 1 - decimalPosition);
 }
 
 
