@@ -58,16 +58,20 @@ divideButton.addEventListener("click", () => reflectOnDisplay("/"))
 function reflectOnDisplay(input) {
     console.log(input);
     errorMessage.textContent = "";
+    // update display if a number is clicked
     if (input >= 0 && input <= 9 && checkCurrentDisplay("numeric")) {
         displayValue += input;
     }
-    else if (input === "allclear") {
+    // update display (to 0) if allclear is clicked OR clear is clicked when length is 1
+    else if (input === "allclear" || input === "clear" && displayValue.length === 1) {
         displayValue = "0";
     }
+    // update display if clear is clicked by removing most recent input
     else if (input === "clear") {
         displayValue = displayValue.slice(0, -1);
     }
-    else if ((input === "+" || input === "-" || input === "*" || input === "/") && checkCurrentDisplay("operator")) {
+    // update display if operator is clicked, provided there is enough character space for an additional number after the operator and if the operator limit (1) has not been reached
+    else if (checkForOperator(input) && checkCurrentDisplay("operator") && noCurrentOperator()) {
         displayValue += input;
     }
     updateDisplay(displayValue);
@@ -82,10 +86,31 @@ function checkCurrentDisplay(type) {
     // character limit for the calculator
     else if ((displayValue.length >= 16 && type === "numeric") || (displayValue.length >= 15 && type === "operator")) {
         errorMessage.textContent = "Character limit reached, please use C or AC to reduce the number of characters";
+        console.log("Error: Character limit reached (maximum: 16)")
         return 0;
     }
     return 1;
-} 
+}
+
+function checkForOperator(value) {
+    return (value === "+" || value === "-" || value === "*" || value === "/");
+}
+
+// iterates through the current display value to count the number of operators, returning an error if a second operator is about to be input
+function noCurrentOperator() {
+    let operatorCount = 0;
+    for (i = 0; i < displayValue.length; i++) {
+        if(checkForOperator(displayValue[i])) {
+            operatorCount += 1;
+        }
+    }
+    if (operatorCount >= 1) {
+        errorMessage.textContent = "Only one operator is allowed at a time";
+        console.log("Error: more than 1 operator")
+        return 0;
+    }
+    return 1;
+}
 
 function updateDisplay(display) {
     displayActual.textContent = display;
