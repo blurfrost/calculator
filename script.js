@@ -3,7 +3,7 @@ let first = 6;
 let second = 3;
 let operator = "+";
 let displayValue = "0";
-const charLimit = 16;
+const charLimit = 18;
 const displayActual = document.querySelector("#display");
 const errorMessage = document.querySelector("#error-showcase");
 
@@ -55,6 +55,9 @@ multiplyButton.addEventListener("click", () => reflectOnDisplay("*"));
 const divideButton = document.querySelector("#divide");
 divideButton.addEventListener("click", () => reflectOnDisplay("/"));
 
+const decimalButton = document.querySelector("#decimal");
+decimalButton.addEventListener("click", () => reflectOnDisplay("."));
+
 const equalButton = document.querySelector("#equate");
 equalButton.addEventListener("click", () => reflectOnDisplay("="));
 
@@ -63,6 +66,9 @@ function reflectOnDisplay(input) {
     errorMessage.textContent = "";
     // update display if a number is clicked
     if (input >= 0 && input <= 9 && checkCurrentDisplay("numeric")) {
+        displayValue += input;
+    }
+    else if (input === "." && noDecimal()) {
         displayValue += input;
     }
     // update display (to 0) if allclear is clicked OR clear is clicked when length is 1
@@ -99,6 +105,29 @@ function checkCurrentDisplay(type) {
         errorMessage.textContent = "Cannot place operator since the character limit of " + charLimit + " will be reached, preventing you from adding additional numbers";
         console.log("Error: Cannot place operator at the character limit of " + charLimit);
         return 0;
+    }
+    return 1;
+}
+
+function noDecimal() {
+    let startPosition = 0;
+    // if an operator is currently present, then start checking for decimal after the operator position, else check from the beginning
+    for (i = 0; i < displayValue.length; i++) {
+        if (checkForOperator(displayValue[i])) {
+            startPosition = i + 1;
+            break;
+        }
+    }
+    return checkForDecimal(startPosition);
+}
+
+function checkForDecimal(base) {
+    for (j = base; j < displayValue.length; j++) {
+        if (displayValue[j] === ".") {
+            errorMessage.textContent = "Only one decimal for each number in the operation";
+            console.log("Error: More than 1 decimal in the current number")
+            return 0;
+        }
     }
     return 1;
 }
