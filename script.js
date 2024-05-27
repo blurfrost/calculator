@@ -58,6 +58,9 @@ divideButton.addEventListener("click", () => reflectOnDisplay("/"));
 const decimalButton = document.querySelector("#decimal");
 decimalButton.addEventListener("click", () => reflectOnDisplay("."));
 
+const plusminusButton = document.querySelector("#plusminus");
+plusminusButton.addEventListener("click", () => reflectOnDisplay("plusminus"));
+
 const equalButton = document.querySelector("#equate");
 equalButton.addEventListener("click", () => reflectOnDisplay("="));
 
@@ -67,6 +70,9 @@ function reflectOnDisplay(input) {
     // update display if a number is clicked
     if (input >= 0 && input <= 9 && checkCurrentDisplay("numeric")) {
         displayValue += input;
+    }
+    else if (input === "plusminus") {
+        displayValue = plusMinus(displayValue);
     }
     else if (input === "." && noDecimal()) {
         displayValue += input;
@@ -107,6 +113,17 @@ function checkCurrentDisplay(type) {
     return 1;
 }
 
+function plusMinus(input) {
+    tempArr = input.split("");
+    if (tempArr[0] === "-") {
+        tempArr.shift();
+    }
+    else {
+        tempArr.unshift("-");
+    }
+    return tempArr.join("");
+}
+
 function noDecimal() {
     let startPosition = 0;
     // if an operator is currently present, then start checking for decimal after the operator position, else check from the beginning
@@ -137,7 +154,7 @@ function checkForOperator(value) {
 // iterates through the current display value to count the number of operators, returning an error if a second operator is about to be input
 function noCurrentOperator(input) {
     let operatorCount = 0;
-    for (i = 0; i < displayValue.length; i++) {
+    for (i = 1; i < displayValue.length; i++) {
         if(checkForOperator(displayValue[i])) {
             operatorCount += 1;
         }
@@ -158,7 +175,7 @@ function updateDisplay(display) {
 function commenceOperation(displayValue) {
     let operator = "";
     let operatorPoint = "";
-    for (i = 0; i < displayValue.length; i++) {
+    for (i = 1; i < displayValue.length; i++) {
         if(checkForOperator(displayValue[i])) {
             // extract operator (there should be only one after the prior checks)
             operator = displayValue[i];
