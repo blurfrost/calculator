@@ -1,7 +1,4 @@
 let result;
-let first = 6;
-let second = 3;
-let operator = "+";
 let displayValue = "0";
 const charLimit = 18;
 const displayActual = document.querySelector("#display");
@@ -54,6 +51,9 @@ multiplyButton.addEventListener("click", () => reflectOnDisplay("*"));
 
 const divideButton = document.querySelector("#divide");
 divideButton.addEventListener("click", () => reflectOnDisplay("/"));
+
+const quotientButton = document.querySelector("#quotient");
+quotientButton.addEventListener("click", () => reflectOnDisplay("%"));
 
 const decimalButton = document.querySelector("#decimal");
 decimalButton.addEventListener("click", () => reflectOnDisplay("."));
@@ -148,7 +148,7 @@ function checkForDecimal(base) {
 }
 
 function checkForOperator(value) {
-    return (value === "+" || value === "-" || value === "*" || value === "/");
+    return (value === "+" || value === "-" || value === "*" || value === "/" || value === "%");
 }
 
 // iterates through the current display value to count the number of operators, returning an error if a second operator is about to be input
@@ -218,6 +218,9 @@ function operate(firstNum, operator, secondNum) {
     else if (operator === "/") {
         result = divide(firstNum, secondNum);
     }
+    else if (operator === "%") {
+        result = quotient(firstNum, secondNum);
+    }
     return result;
 }
 
@@ -239,6 +242,14 @@ function divide(firstNum, secondNum) {
         return displayValue;
     }
     return firstNum / secondNum;
+}
+
+function quotient(firstNum, secondNum) {
+    if (secondNum === 0) {
+        displayError("divByZero");
+        return displayValue;
+        }
+    return firstNum % secondNum;
 }
 
 function limitDecimalPlaces(number, string) {
