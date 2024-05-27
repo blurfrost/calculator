@@ -80,11 +80,11 @@ function reflectOnDisplay(input) {
         displayValue = displayValue.slice(0, -1);
     }
     // update display if operator is clicked, provided there is enough character space for an additional number after the operator and if the operator limit (1) has not been reached
-    else if (checkForOperator(input) && checkCurrentDisplay("operator") && noCurrentOperator()) {
+    else if (checkForOperator(input) && checkCurrentDisplay("operator") && noCurrentOperator("operator")) {
         displayValue += input;
     }
-    else if (input === "=") {
-        displayValue = commenceOperation(displayValue);
+    else if (input === "=" && !noCurrentOperator("equate")) {
+            displayValue = commenceOperation(displayValue);
     }
     console.log("Input: " + input + " Display: " + displayValue + " Chars: " + displayValue.length);
     updateDisplay(displayValue);
@@ -97,13 +97,11 @@ function checkCurrentDisplay(type) {
     }
     // character limit for the calculator
     else if (displayValue.length >= charLimit && type === "numeric") {
-        errorMessage.textContent = "Character limit of " + charLimit + " reached, please use C or AC to reduce the number of characters";
-        console.log("Error: Character limit of " + charLimit + " reached");
+        displayError("charLimitReached");
         return 0;
     }
     else if (displayValue.length >= (charLimit - 1) && type === "operator") {
-        errorMessage.textContent = "Cannot place operator since the character limit of " + charLimit + " will be reached, preventing you from adding additional numbers";
-        console.log("Error: Cannot place operator at the character limit of " + charLimit);
+        displayError("operatorAtCharLimit");
         return 0;
     }
     return 1;
@@ -124,8 +122,8 @@ function noDecimal() {
 function checkForDecimal(base) {
     for (j = base; j < displayValue.length; j++) {
         if (displayValue[j] === ".") {
-            errorMessage.textContent = "Only one decimal for each number in the operation";
-            console.log("Error: More than 1 decimal in the current number")
+            displayError("decimalLimit");
+            
             return 0;
         }
     }
@@ -137,7 +135,7 @@ function checkForOperator(value) {
 }
 
 // iterates through the current display value to count the number of operators, returning an error if a second operator is about to be input
-function noCurrentOperator() {
+function noCurrentOperator(input) {
     let operatorCount = 0;
     for (i = 0; i < displayValue.length; i++) {
         if(checkForOperator(displayValue[i])) {
@@ -145,8 +143,9 @@ function noCurrentOperator() {
         }
     }
     if (operatorCount >= 1) {
-        errorMessage.textContent = "Only one operator is allowed at a time";
-        console.log("Error: more than 1 operator")
+        if (input === "operator") {
+            displayError("operatorLimit");
+        }
         return 0;
     }
     return 1;
@@ -181,8 +180,7 @@ function commenceOperation(displayValue) {
         }
         // if calculation resulted in breaking the character limit, prevent the calculation from proceeding
         else {
-            errorMessage.textContent = "Operation result exceeds character limit of " + charLimit;
-            console.log("Error: Operation result exceeds character limit of " + charLimit);
+            displayError("resultCharLimit")
             return displayValue;
         }
     }
@@ -220,8 +218,7 @@ function multiply(firstNum, secondNum) {
 
 function divide(firstNum, secondNum) {
     if (secondNum === 0) {
-        errorMessage.textContent = "You cannot divide a number by zero!";
-        console.log("Error: Attempted to divide by zero");
+        displayError("divByZero");
         return displayValue;
     }
     return firstNum / secondNum;
@@ -238,4 +235,29 @@ function limitDecimalPlaces(number, string) {
     return number.toFixed(charLimit - 1 - decimalPosition);
 }
 
-
+function displayError(type) {
+    if (type === "charLimitReached") {
+        errorMessage.textContent = "Character limit of " + charLimit + " reached, please use C or AC to reduce the number of characters";
+        console.log("Error: Character limit of " + charLimit + " reached");
+    }
+    else if (type === "divByZero") {
+        errorMessage.textContent = "You cannot divide a number by zero!";
+        console.log("Error: Attempted to divide by zero");
+    }
+    else if (type === "resultCharLimit") {
+        errorMessage.textContent = "Operation result exceeds character limit of " + charLimit;
+        console.log("Error: Operation result exceeds character limit of " + charLimit);
+    }
+    else if (type === "operatorLimit") {
+        errorMessage.textContent = "Only one operator is allowed at a time";
+        console.log("Error: more than 1 operator")
+    }
+    else if (type === "decimalLimit") {
+        errorMessage.textContent = "Only one decimal for each number in the operation";
+        console.log("Error: More than 1 decimal in the current number")
+    }
+    else if (type === "operatorAtCharLimit") {
+        errorMessage.textContent = "Cannot place operator since the character limit of " + charLimit + " will be reached, preventing you from adding additional numbers";
+        console.log("Error: Cannot place operator at the character limit of " + charLimit);
+    }
+}

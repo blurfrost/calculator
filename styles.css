@@ -21,7 +21,7 @@
 #display-container {
     max-height: 20%;
     border: 2px solid black;
-    margin: 2px 2px 14px 2px;
+    margin: 4px 4px 14px 4px;
     flex: 1 1 auto;
     display: flex;
     justify-content: end;
@@ -34,6 +34,20 @@
     margin: 0 12px;
     background-color: white;
 }
+
+button {
+    transition-duration: 0.2s;
+    box-shadow: 0 4px gray;
+}
+
+button:hover {
+    opacity: 0.7;
+}
+
+button:active {
+    box-shadow: 0 1px gray;
+    transform: translateY(3px);
+  }
 
 .row-container {
     background-color: yellow;
@@ -53,7 +67,7 @@
     justify-content: center;
     align-items: center;
     padding: 0;
-    margin: 2px;
+    margin: 4px;
 }
 
 .long {
